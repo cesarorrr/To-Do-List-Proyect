@@ -87,6 +87,11 @@ const ToDoListSlice = createSlice({
         list.isFinished = allTasksFinished;
       }
     },
+    deleteList: (state, action: PayloadAction<{ listId: number }>) => {
+      const { listId } = action.payload;
+
+      state.Lists = state.Lists.filter((list) => list.id !== listId);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchLists.fulfilled, (state, action) => {
@@ -101,6 +106,6 @@ export const fetchLists = createAsyncThunk('toDoList/fetchLists', async () => {
   const data = await response.json();
   return data;
 });
-export const { toggleTaskFinished, deleteTask, addNewTask } =
+export const { toggleTaskFinished, deleteTask, addNewTask, deleteList } =
   ToDoListSlice.actions;
 export default ToDoListSlice.reducer;

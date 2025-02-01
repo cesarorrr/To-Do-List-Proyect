@@ -10,6 +10,7 @@ import {
   toggleTaskFinished,
   deleteTask,
   addNewTask,
+  deleteList,
 } from './redux/ToDoListSlice';
 import Swal from 'sweetalert2';
 
@@ -53,6 +54,33 @@ export default function App() {
       dispatch(addNewTask({ listId, taskText: value }));
     }
   };
+  const deleteListFunc = async (listId: number, listTitle: string) => {
+    const { value, isConfirmed } = await Swal.fire({
+      title: 'Eliminar lista ' + listTitle,
+      input: 'text',
+      text:
+        'Estas seguro de que desea eliminar ' +
+        listTitle +
+        '. Para eliminar la lista introduzca: Eliminar ' +
+        listTitle,
+      showCancelButton: true,
+      confirmButtonText: 'Añadir',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (value !== 'Eliminar ' + listTitle) {
+          return 'El valor introducido no es el pedido';
+        }
+      },
+      preConfirm: (inputValue) => {
+        return inputValue;
+      },
+    });
+
+    if (isConfirmed && value) {
+      // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
+      dispatch(deleteList({ listId }));
+    }
+  };
 
   return (
     <div className="p-6">
@@ -75,11 +103,21 @@ export default function App() {
               <strong className="text-xl font-semibold text-gray-800">
                 {item.title}
               </strong>
-              <button
-                onClick={() => addTaskFunc(item.id, item.title)}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
-                Añadir Tarea
-              </button>
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => addTaskFunc(item.id, item.title)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
+                  Añadir Tarea
+                </button>
+
+                {item.tasks.length === 0 && (
+                  <button
+                    onClick={() => deleteListFunc(item.id, item.title)}
+                    className="px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 transition duration-200">
+                    Eliminar Lista
+                  </button>
+                )}
+              </div>
             </div>
 
             <ul className="ml-4 space-y-4">
