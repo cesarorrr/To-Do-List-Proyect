@@ -1,106 +1,115 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from './redux/store';
-import { increment, decrement, incrementByAmount } from './redux/counterSlice';
-import { useState } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { RootState, AppDispatch } from './redux/store';
+// import { loadData } from './redux/ToDoListSlice';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from './redux/store';
+import { RootState } from './redux/store'; // Ajusta la ruta según tu estructura
+import {
+  fetchLists,
+  toggleTaskFinished,
+  deleteTask,
+  addNewTask,
+} from './redux/ToDoListSlice';
+import Swal from 'sweetalert2';
 
 export default function App() {
-  const count = useSelector((state: RootState) => state.counter.value);
-  const dispatch = useDispatch<AppDispatch>();
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Aprender React', status: 'todo' },
-    { id: 2, text: 'Configurar Redux', status: 'in-progress' },
-    { id: 3, text: 'Crear interfaz con Tailwind', status: 'done' },
-  ]);
-  const [newTask, setNewTask] = useState('');
+  // const count = useSelector((state: RootState=> state.counter.value);
+  // const dispatch = useDispatch<AppDispatch>();
+  // const [list, setList] = useState<List[]>([]);
+  const dispatch = useAppDispatch();
+  const list = useSelector((state: RootState) => state.toDoList.Lists);
 
-  const addTask = () => {
-    if (newTask.trim() === '') return;
-    setTasks([...tasks, { id: Date.now(), text: newTask, status: 'todo' }]);
-    setNewTask('');
+  useEffect(() => {
+    dispatch(fetchLists());
+  }, []);
+
+  const handleToggleTaskFinished = (listId: number, taskId: number) => {
+    dispatch(toggleTaskFinished({ listId, taskId }));
   };
-
-  const moveTask = (id, newStatus) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task
-      )
-    );
+  const deleteTaskFunc = (listId: number, taskId: number) => {
+    dispatch(deleteTask({ listId, taskId }));
   };
+  const addTaskFunc = async (listId: number) => {
+    const { value, isConfirmed } = await Swal.fire({
+      title: 'Añadir Nueva Tarea',
+      input: 'text',
+      inputPlaceholder: 'Escribe la tarea aquí...',
+      showCancelButton: true,
+      confirmButtonText: 'Añadir',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Por favor, ingresa el texto de la tarea';
+        }
+      },
+      preConfirm: (inputValue) => {
+        return inputValue;
+      },
+    });
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    if (isConfirmed && value) {
+      // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
+      dispatch(addNewTask({ listId, taskText: value }));
+    }
   };
-
-  const columns = [
-    { id: 'todo', title: 'Por Hacer', color: 'bg-gray-200' },
-    { id: 'in-progress', title: 'En Progreso', color: 'bg-blue-200' },
-    { id: 'done', title: 'Completado', color: 'bg-green-200' },
-  ];
 
   return (
-    <div className="min-h-screen bg-white-200 flex flex-col items-center p-8">
-      <h1 className="text-3xl font-bold mb-6">Tablero de Notas 📝</h1>
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8 rounded">
-        <div className="flex space-x-2 mb-6">
-          <input
-            type="text"
-            className="border p-2 rounded w-64"
-            placeholder="Nueva tarea..."
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-          />
-          <button
-            onClick={addTask}
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center">
-            Agregar
-          </button>
-        </div>
+    <div className="p-6">
+      <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-8">
+        Lista de Tareas
+      </h1>
 
-        <div className="grid grid-cols-3 gap-6 w-full max-w-5xl">
-          {columns.map((column) => (
-            <div
-              key={column.id}
-              className="w-full p-4 rounded-lg shadow-lg"
-              style={{ backgroundColor: column.color }}>
-              <h2 className="text-xl font-semibold text-center mb-4">
-                {column.title}
-              </h2>
-              <div className="space-y-2">
-                {tasks
-                  .filter((task) => task.status === column.id)
-                  .map((task) => (
-                    <div
-                      key={task.id}
-                      className="bg-white p-3 rounded shadow flex justify-between items-center">
-                      <span>{task.text}</span>
-                      <div className="flex space-x-2">
-                        {column.id !== 'done' && (
-                          <button
-                            className="text-blue-500"
-                            onClick={() => moveTask(task.id, 'in-progress')}>
-                            ▶
-                          </button>
-                        )}
-                        {column.id !== 'done' && (
-                          <button
-                            className="text-green-500"
-                            onClick={() => moveTask(task.id, 'done')}>
-                            ✅
-                          </button>
-                        )}
-                        <button
-                          className="text-red-500"
-                          onClick={() => deleteTask(task.id)}>
-                          Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+      <ul className="space-y-6">
+        {list.map((item) => (
+          <li
+            key={item.id}
+            className={`p-4 rounded-lg shadow-lg ${
+              item.tasks.length === 0
+                ? 'bg-gray-300'
+                : item.isFinished
+                ? 'bg-lime-400'
+                : 'bg-orange-200'
+            } hover:shadow-xl transition duration-300 ease-in-out`}>
+            <div className="flex justify-between items-center mb-4">
+              <strong className="text-xl font-semibold text-gray-800">
+                {item.title}
+              </strong>
+              <button
+                onClick={() => addTaskFunc(item.id)}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
+                Añadir Tarea
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
+
+            <ul className="ml-4 space-y-4">
+              {item.tasks.map((task) => (
+                <li
+                  key={task.id}
+                  className="p-4 rounded-lg bg-white shadow-md hover:shadow-lg transition duration-200">
+                  <div className="flex justify-between items-center">
+                    <p
+                      className={`cursor-pointer text-gray-800 ${
+                        task.isFinished ? 'line-through text-gray-500' : ''
+                      }`}
+                      onClick={() =>
+                        handleToggleTaskFinished(item.id, task.id)
+                      }>
+                      {task.text}
+                    </p>
+
+                    <button
+                      onClick={() => deleteTaskFunc(item.id, task.id)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
+                      Eliminar
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
