@@ -30,9 +30,9 @@ export default function App() {
   const deleteTaskFunc = (listId: number, taskId: number) => {
     dispatch(deleteTask({ listId, taskId }));
   };
-  const addTaskFunc = async (listId: number) => {
+  const addTaskFunc = async (listId: number, listTitle: string) => {
     const { value, isConfirmed } = await Swal.fire({
-      title: 'Añadir Nueva Tarea',
+      title: 'Añadir Nueva Tarea A ' + listTitle,
       input: 'text',
       inputPlaceholder: 'Escribe la tarea aquí...',
       showCancelButton: true,
@@ -76,7 +76,7 @@ export default function App() {
                 {item.title}
               </strong>
               <button
-                onClick={() => addTaskFunc(item.id)}
+                onClick={() => addTaskFunc(item.id, item.title)}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
                 Añadir Tarea
               </button>
