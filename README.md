@@ -1,3 +1,7 @@
+Iniciar front en carpeta frontend: npm run dev
+Iniciar node en carpeta backend: node server.js
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
