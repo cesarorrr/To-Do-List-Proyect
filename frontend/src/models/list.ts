@@ -5,5 +5,5 @@ export interface List {
   title: string;
   tasks: Task[];
   isFinished: boolean;
-  createdAt: Date;
+  createdAt: string;
 }

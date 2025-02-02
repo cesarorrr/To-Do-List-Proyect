@@ -69,14 +69,12 @@ const ToDoListSlice = createSlice({
         // Obtén el ID de la última tarea en la lista (si existe)
         const lastTaskId =
           list.tasks.length > 0 ? Math.max(...list.tasks.map((t) => t.id)) : 0;
-
         // Asigna el nuevo ID a la tarea sumando 1 al ID más alto
         const newTask = {
-          id: lastTaskId + 1, // ID de la nueva tarea es el último ID + 1
+          id: lastTaskId > 0 ? lastTaskId + 1 : 100, // ID de la nueva tarea es el último ID + 1
           text: taskText,
           isFinished: false,
         };
-
         // Añade la nueva tarea a la lista
         list.tasks.push(newTask);
 
@@ -92,6 +90,28 @@ const ToDoListSlice = createSlice({
 
       state.Lists = state.Lists.filter((list) => list.id !== listId);
     },
+    createList: (state, action: PayloadAction<{ listTitle: string }>) => {
+      const { listTitle } = action.payload;
+      // Obtén el ID de la última lista en el estado (si existe)
+      const lastListId =
+        state.Lists.length > 0 ? Math.max(...state.Lists.map((l) => l.id)) : 0;
+
+      // Crea la nueva lista con el ID siguiente al más alto encontrado
+      const newList = {
+        id: lastListId > 0 ? lastListId + 1 : 1,
+        title: listTitle,
+        tasks: [],
+        isFinished: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Añade la nueva lista al estado
+      state.Lists.push(newList);
+    },
+    saveList: (state) => {
+      const { Lists } = state;
+      console.log(JSON.stringify(Lists));
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchLists.fulfilled, (state, action) => {
@@ -100,12 +120,46 @@ const ToDoListSlice = createSlice({
   },
 });
 
-// Crear un thunk para cargar los datos de manera asíncrona
 export const fetchLists = createAsyncThunk('toDoList/fetchLists', async () => {
-  const response = await fetch('/data/data.json');
+  const response = await fetch('http://localhost:3001/api/data');
+
+  if (!response.ok) {
+    throw new Error('Error al obtener los datos');
+  }
+
   const data = await response.json();
+
+  console.log(data);
   return data;
 });
-export const { toggleTaskFinished, deleteTask, addNewTask, deleteList } =
-  ToDoListSlice.actions;
+
+export const saveLists = createAsyncThunk(
+  'toDoList/saveLists',
+  async (newData: List[]) => {
+    console.log(newData);
+    const response = await fetch('http://localhost:3001/api/data', {
+      method: 'POST', // Usamos POST para guardar datos
+      headers: {
+        'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
+      },
+      body: JSON.stringify(newData), // Los datos que queremos guardar
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al guardar los datos');
+    }
+
+    const data = await response.json();
+    console.log(data); // Para ver la respuesta del servidor
+    return data; // Devolver los datos como resultado de la acción
+  }
+);
+export const {
+  toggleTaskFinished,
+  deleteTask,
+  addNewTask,
+  deleteList,
+  createList,
+  saveList,
+} = ToDoListSlice.actions;
 export default ToDoListSlice.reducer;
