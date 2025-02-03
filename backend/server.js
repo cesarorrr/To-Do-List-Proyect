@@ -24,7 +24,6 @@ app.get('/api/data', (req, res) => {
 app.post('/api/data', (req, res) => {
   try {
     const newData = req.body; // Datos enviados en el POST
-    console.log(newData);
     fs.writeFileSync('data.json', JSON.stringify(newData, null, 2), 'utf-8');
     res.status(200).json({ success: true });
   } catch (error) {

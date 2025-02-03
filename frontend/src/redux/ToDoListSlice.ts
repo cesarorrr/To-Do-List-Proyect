@@ -71,7 +71,7 @@ const ToDoListSlice = createSlice({
           list.tasks.length > 0 ? Math.max(...list.tasks.map((t) => t.id)) : 0;
         // Asigna el nuevo ID a la tarea sumando 1 al ID más alto
         const newTask = {
-          id: lastTaskId > 0 ? lastTaskId + 1 : 100, // ID de la nueva tarea es el último ID + 1
+          id: lastTaskId !== 0 ? lastTaskId + 1 : 100,
           text: taskText,
           isFinished: false,
         };
@@ -98,7 +98,7 @@ const ToDoListSlice = createSlice({
 
       // Crea la nueva lista con el ID siguiente al más alto encontrado
       const newList = {
-        id: lastListId > 0 ? lastListId + 1 : 1,
+        id: lastListId !== 0 ? lastListId + 1 : 1,
         title: listTitle,
         tasks: [],
         isFinished: false,
@@ -107,10 +107,6 @@ const ToDoListSlice = createSlice({
 
       // Añade la nueva lista al estado
       state.Lists.push(newList);
-    },
-    saveList: (state) => {
-      const { Lists } = state;
-      console.log(JSON.stringify(Lists));
     },
   },
   extraReducers: (builder) => {
@@ -129,14 +125,12 @@ export const fetchLists = createAsyncThunk('toDoList/fetchLists', async () => {
 
   const data = await response.json();
 
-  console.log(data);
   return data;
 });
 
 export const saveLists = createAsyncThunk(
   'toDoList/saveLists',
   async (newData: List[]) => {
-    console.log(newData);
     const response = await fetch('http://localhost:3001/api/data', {
       method: 'POST', // Usamos POST para guardar datos
       headers: {
@@ -150,8 +144,7 @@ export const saveLists = createAsyncThunk(
     }
 
     const data = await response.json();
-    console.log(data); // Para ver la respuesta del servidor
-    return data; // Devolver los datos como resultado de la acción
+    return data;
   }
 );
 export const {
@@ -160,6 +153,5 @@ export const {
   addNewTask,
   deleteList,
   createList,
-  saveList,
 } = ToDoListSlice.actions;
 export default ToDoListSlice.reducer;
