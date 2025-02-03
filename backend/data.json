@@ -12,6 +12,16 @@
         "id": 102,
         "text": "Enviar informe",
         "isFinished": false
+      },
+      {
+        "id": 104,
+        "text": "c",
+        "isFinished": true
+      },
+      {
+        "id": 106,
+        "text": "b",
+        "isFinished": true
       }
     ],
     "isFinished": false,
@@ -22,17 +32,25 @@
     "title": "Casa",
     "tasks": [
       {
-        "id": 201,
-        "text": "Lavar la ropa",
-        "isFinished": false
-      },
-      {
-        "id": 202,
-        "text": "Hacer la compra",
+        "id": 100,
+        "text": "Limpiar",
         "isFinished": false
       }
     ],
     "isFinished": false,
-    "createdAt": "2024-02-01T12:30:00Z"
+    "createdAt": "2025-02-03T14:04:29.030Z"
+  },
+  {
+    "id": 3,
+    "title": "test1",
+    "tasks": [
+      {
+        "id": 100,
+        "text": "test",
+        "isFinished": true
+      }
+    ],
+    "isFinished": true,
+    "createdAt": "2025-02-03T14:15:20.307Z"
   }
 ]

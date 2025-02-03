@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from './redux/store';
 import { RootState } from './redux/store'; // Ajusta la ruta según tu estructura
-import {
-  fetchLists,
-  deleteList,
-  createList,
-  saveLists,
-} from './redux/ToDoListSlice';
+import { fetchLists, createList, saveLists } from './redux/ToDoListSlice';
 import Swal from 'sweetalert2';
 import List from './components/list';
 
@@ -21,38 +16,6 @@ export default function App() {
     dispatch(fetchLists());
   }, []);
 
-  const deleteListFunc = async (listId: number, listTitle: string) => {
-    const { value, isConfirmed } = await Swal.fire({
-      title: 'Eliminar lista ' + listTitle,
-      input: 'text',
-      text:
-        'Estas seguro de que desea eliminar ' +
-        listTitle +
-        '. Para eliminar la lista introduzca: Eliminar ' +
-        listTitle,
-      showCancelButton: true,
-      confirmButtonText: 'Añadir',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (value !== 'Eliminar ' + listTitle) {
-          return 'El valor introducido no es el pedido';
-        }
-      },
-      preConfirm: (inputValue) => {
-        return inputValue;
-      },
-    });
-
-    if (isConfirmed && value) {
-      // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
-      try {
-        // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
-        dispatch(deleteList({ listId }));
-      } catch (error) {
-        console.error('Error al eliminar la lista', error);
-      }
-    }
-  };
   const createListFunc = async () => {
     const { value, isConfirmed } = await Swal.fire({
       title: 'Crear nueva lista',
@@ -89,20 +52,21 @@ export default function App() {
 
   return (
     <>
-      <div className="p-6">
-        <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-8">
+      <div className="flex flex-col items-center justify-start p-6 bg-gradient-to-b from-blue-200 via-green-200 to-teal-200 h-screen">
+        <h1 className="text-5xl font-extrabold text-center text-gray-800 mb-4">
           Lista de Tareas
         </h1>
         <button
           onClick={() => createListFunc()}
-          className="px-4 py-2 bg-orange-300 text-white rounded-lg hover:bg-orange-500 transition duration-200">
+          className="px-6 py-3 bg-orange-300 text-white rounded-lg hover:bg-orange-500 transition duration-200 mb-6">
           Añadir Lista
         </button>
-        <ul className="space-y-6">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-7xl">
           {list.map((item) => (
             <li
               key={item.id}
-              className={`p-4 rounded-lg shadow-lg ${
+              className={`p-6 rounded-lg shadow-lg flex items-center justify-center h-40 ${
                 item.tasks.length === 0
                   ? 'bg-gray-300'
                   : item.isFinished
@@ -113,26 +77,24 @@ export default function App() {
                 setlistId(item.id);
                 setModalOpen(true);
               }}>
-              <div className="flex justify-between items-center mb-4">
+              <div className="text-center">
                 <strong className="text-xl font-semibold text-gray-800">
                   {item.title}
                 </strong>
-                <button
-                  onClick={() => deleteListFunc(item.id, item.title)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition duration-200">
-                  Eliminar Lista
-                </button>
               </div>
             </li>
           ))}
-        </ul>
+        </div>
       </div>
+
       <List
         isOpen={modalOpen}
         onClose={() => {
-          saveDataFunc(), setModalOpen(false);
+          saveDataFunc();
+          setModalOpen(false);
         }}
-        listId={listId}></List>
+        listId={listId}
+      />
     </>
   );
 }

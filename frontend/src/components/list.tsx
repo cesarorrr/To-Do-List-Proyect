@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../redux/store';
 import {
   addNewTask,
+  deleteList,
   deleteTask,
   toggleTaskFinished,
 } from '../redux/ToDoListSlice';
@@ -74,10 +75,41 @@ export default function List({ isOpen, onClose, listId }: ListProps) {
       }
     }
   };
+  const deleteListFunc = async (listId: number, listTitle: string) => {
+    const { value, isConfirmed } = await Swal.fire({
+      title: 'Eliminar lista ' + listTitle,
+      input: 'text',
+      text:
+        'Estas seguro de que desea eliminar ' +
+        listTitle +
+        '. Para eliminar la lista introduzca: Eliminar ' +
+        listTitle,
+      showCancelButton: true,
+      confirmButtonText: 'Añadir',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (value !== 'Eliminar ' + listTitle) {
+          return 'El valor introducido no es el pedido';
+        }
+      },
+      preConfirm: (inputValue) => {
+        return inputValue;
+      },
+    });
 
+    if (isConfirmed && value) {
+      // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
+      try {
+        // Aquí puedes llamar a tu acción para agregar la nueva tarea a la lista correspondiente
+        dispatch(deleteList({ listId }));
+      } catch (error) {
+        console.error('Error al eliminar la lista', error);
+      }
+    }
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md bg-black/30">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-3/4 h-[70vh] relative">
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl">
@@ -91,7 +123,7 @@ export default function List({ isOpen, onClose, listId }: ListProps) {
               : item.isFinished
               ? 'bg-lime-400'
               : 'bg-orange-200'
-          } hover:shadow-xl transition duration-300 ease-in-out`}>
+          } hover:shadow-xl transition duration-300 ease-in-out h-full`}>
           <div className="flex justify-between items-center mb-4">
             <strong className="text-xl font-semibold text-gray-800">
               {item.title}
@@ -102,18 +134,24 @@ export default function List({ isOpen, onClose, listId }: ListProps) {
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200">
                 Añadir Tarea
               </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteListFunc(item.id, item.title);
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
+                Eliminar Lista
+              </button>
             </div>
           </div>
-
-          <ul className="ml-4 space-y-4">
+          <ul className="ml-4 space-y-4 overflow-y-auto max-h-[450px]">
             {item.tasks.map((task) => (
               <li
                 key={task.id}
                 className="p-4 rounded-lg bg-white shadow-md hover:shadow-lg transition duration-200">
                 <div
                   className="flex justify-between items-center cursor-pointer"
-                  onClick={() => handleToggleTaskFinished(item.id, task.id)} // Se activa al hacer clic en el div
-                >
+                  onClick={() => handleToggleTaskFinished(item.id, task.id)}>
                   <p
                     className={`text-gray-800 ${
                       task.isFinished ? 'line-through text-gray-500' : ''
@@ -123,7 +161,7 @@ export default function List({ isOpen, onClose, listId }: ListProps) {
 
                   <button
                     onClick={(event) => {
-                      event.stopPropagation(); // Evita que el evento llegue al div
+                      event.stopPropagation();
                       deleteTaskFunc(item.id, task.id);
                     }}
                     className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
