@@ -20,24 +20,24 @@ Este es un proyecto de lista de tareas desarrollado con **Vite + React + TypeScr
 git clone https://github.com/tu-usuario/To-Do-List-Project.git
 cd To-Do-List-Project
 ```
-###2️⃣ Instalación de dependencias
-###📌 Backend
+### 2️⃣ Instalación de dependencias
+### 📌 Backend
 ```bash
 cd backend
 npm install
 ```
-###📌 Frontend
+### 📌 Frontend
 ```bash
 cd ../frontend
 npm install
 ```
-###3️⃣ Ejecución del proyecto
-###🚀 Backend
+### 3️⃣ Ejecución del proyecto
+### 🚀 Backend
 ```bash
 cd backend
 node server.js
 ```
-###🚀 Frontend
+### 🚀 Frontend
 ```bash
 cd frontend
 npm run dev
