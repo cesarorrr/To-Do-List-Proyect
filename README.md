@@ -1,50 +1,50 @@
-# React + TypeScript + Vite
+To-Do List Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este es un proyecto de lista de tareas desarrollado con Vite + React + TypeScript en el frontend y Node.js + Express + fs en el backend. Además, se han utilizado Redux para el manejo de estado y SweetAlert2 para las alertas interactivas.
 
-Currently, two official plugins are available:
+📌 Tecnologías utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🖥️ Frontend
 
-## Expanding the ESLint configuration
+Vite + React + TypeScript
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Redux para el manejo de estado
 
-- Configure the top-level `parserOptions` property like this:
+SweetAlert2 para las alertas interactivas
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+🖥️ Backend
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Node.js con Express
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+fs para manejar archivos JSON como base de datos
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+⚡ Instalación y ejecución
+
+1️⃣ Clonar el repositorio
+
+git clone https://github.com/tu-usuario/To-Do-List-Project.git
+cd To-Do-List-Project
+
+2️⃣ Instalación de dependencias
+
+📌 Backend
+
+cd backend
+npm install
+
+📌 Frontend
+
+cd ../frontend
+npm install
+
+3️⃣ Ejecución del proyecto
+
+🚀 Backend
+
+cd backend
+node server.js
+
+🚀 Frontend
+
+cd frontend
+npm run dev
