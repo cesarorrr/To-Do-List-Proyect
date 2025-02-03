@@ -154,7 +154,7 @@ export default function App() {
       <button
         onClick={() => saveDataFunc()}
         className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-700 transition duration-200">
-        Guardar Lista
+        Guardar Listas
       </button>
       <ul className="space-y-6">
         {list.map((item) => (
